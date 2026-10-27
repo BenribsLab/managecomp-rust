@@ -131,6 +131,39 @@ impl Contest {
             }
         }
 
+        // Lobbys (série) : un lot par phase, un « match » par lobby, placé comme une poule.
+        for i in 0..self.schedule.len() {
+            if i > current {
+                break;
+            }
+            let Some(stage) = self.schedule.stage(i) else { continue };
+            let Some(lobby) = stage.as_any().downcast_ref::<crate::rounds::lobby::Lobby>() else { continue };
+            if lobby.lobbies().is_empty() || stage.base().net_id == 0 {
+                continue;
+            }
+            let batch_id = stage.base().net_id;
+            let mut batch = Parcel::new("BellePoule::Batch", batch_id);
+            batch.set("competition", self.net_id);
+            batch.set("stage", batch_id);
+            batch.set("name", if stage.name().is_empty() { crate::i18n::tr("Lobby (series)") } else { stage.name() });
+            batch.set("done", stage.base().locked as u32);
+            batch.set("ready_jobs", lobby.lobbies().len());
+            batch.set("expected_jobs", lobby.lobbies().len());
+            out.push(batch);
+            for l in 0..lobby.lobbies().len() {
+                let mut job = Parcel::new("BellePoule::Job", lobby.lobby_net_id(l));
+                job.set("kind", "pool");
+                job.set("competition", self.net_id);
+                job.set("stage", batch_id);
+                job.set("batch", batch_id);
+                job.set("xml", lobby.job_xml(l));
+                job.set("display_position", l + 1);
+                job.set("duration_sec", lobby.duration_sec());
+                job.set("workload_units", lobby.settings.races.max(1));
+                out.push(job);
+            }
+        }
+
         // Tableaux : `Table::Spread` (lot par tableau prêt) puis `Match::FeedParcel`.
         for i in 0..self.schedule.len() {
             if i > current {
@@ -243,6 +276,14 @@ impl Contest {
                 } else {
                     pool.set_roadmap(players, 0, None);
                 }
+                return true;
+            }
+        }
+        // Lobby (série) : placé comme une poule.
+        for i in 0..self.schedule.len() {
+            let Some(lobby) = self.schedule.stage_mut(i).and_then(|s| s.as_any_mut().downcast_mut::<crate::rounds::lobby::Lobby>()) else { continue };
+            if lobby.apply_roadmap(source, fitness, pistes, start, &known) {
+                self.dirty = true;
                 return true;
             }
         }

@@ -14,6 +14,7 @@ pub mod barrage;
 pub mod checkin;
 pub mod divisions;
 pub mod general_classification;
+pub mod lobby;
 pub(crate) mod group_print;
 pub(crate) mod relay_print;
 mod pillow;
@@ -49,6 +50,7 @@ pub fn build(page: &Rc<ContestPage>, index: usize) -> Rc<dyn StageScreen> {
         Some(StageKind::GeneralClassification) => general_classification::ClassificationScreen::new(page, index),
         Some(StageKind::YouthTraining) => youth::YouthScreen::new(page, index),
         Some(StageKind::DivisionRound) => divisions::DivisionScreen::new(page, index),
+        Some(StageKind::Lobby) => lobby::LobbyScreen::new(page, index),
         _ => Rc::new(Pending::new(page, index)),
     }
 }

@@ -2158,3 +2158,294 @@ msgstr "n°"
 
 msgid "Number of the match to show in the displayed table: type 3 to go to match 1-16.3"
 msgstr "Numéro du match à afficher dans le tableau : tapez 3 pour aller au match 1-16.3"
+
+msgid "Remove from recent competitions (the file is kept)"
+msgstr "Retirer des compétitions récentes (le fichier est conservé)"
+
+msgid "Remove from recent competitions"
+msgstr "Retirer des compétitions récentes"
+
+msgid "The file is not deleted."
+msgstr "Le fichier n'est pas effacé."
+
+msgid "blocked sheet(s)"
+msgstr "feuille(s) bloquée(s)"
+
+msgid "Sheet blocked: too many wrong PIN codes"
+msgstr "Feuille bloquée : trop de codes PIN faux"
+
+msgid "Unlock it in BellePoule2D > Referees on phones."
+msgstr "Débloquez-la dans la fenêtre « Arbitres sur téléphone »."
+
+msgid "Blocked sheet"
+msgstr "Feuille bloquée"
+
+msgid "Unlock"
+msgstr "Débloquer"
+
+msgid "Personal sheets"
+msgstr "Feuilles personnelles"
+
+msgid "One page per referee: personal QR code (no PIN) and PIN code"
+msgstr "Une page par arbitre : QR code personnel (sans PIN) et code PIN"
+
+msgid "PIN list"
+msgstr "Liste des PIN"
+
+msgid "Pool and match sheets carry a QR code too: the referee scans it, then enters the PIN (once for the competition). After 20 wrong PINs the sheet pauses 5 minutes, after 20 more it is blocked until you unlock it."
+msgstr "Les feuilles de poule et de match portent aussi un QR code : l'arbitre le scanne puis entre son PIN (une seule fois pour la compétition). Après 20 PIN faux, la feuille est suspendue 5 minutes ; après 20 de plus, elle est bloquée jusqu'à ce que vous la débloquiez."
+
+msgid "New code"
+msgstr "Nouveau code"
+
+msgid "New personal QR code and new PIN (if a PIN has leaked): the referee's phones must reconnect"
+msgstr "Nouveau QR code personnel et nouveau PIN (si un PIN a circulé) : les téléphones de l'arbitre devront se reconnecter"
+
+msgid "New code for"
+msgstr "Nouveau code pour"
+
+msgid "The current personal QR code and PIN will no longer work. Remember to give the referee the new sheet."
+msgstr "Le QR code personnel et le PIN actuels ne marcheront plus. Pensez à remettre la nouvelle feuille à l'arbitre."
+
+msgid "Scan this QR code with your phone's camera: your pools and bouts appear, without password. This sheet is personal, keep it."
+msgstr "Scannez ce QR code avec l'appareil photo de votre téléphone : vos poules et vos matchs s'affichent, sans mot de passe. Cette feuille est personnelle, gardez-la pour vous."
+
+msgid "Your PIN code:"
+msgstr "Votre code PIN :"
+
+msgid "Pool and match sheets carry a QR code too: scan it, then enter this PIN code (once for the competition)."
+msgstr "Les feuilles de poule et de match portent aussi un QR code : scannez-le, puis entrez ce code PIN (une seule fois pour la compétition)."
+
+msgid "Referees' PIN codes"
+msgstr "Codes PIN des arbitres"
+
+msgid "Confidential: for the organisers."
+msgstr "Confidentiel : réservé à l'organisation."
+
+msgid "referee report(s): see Referees on phones"
+msgstr "signalement(s) d'arbitre : voir « Arbitres sur téléphone »"
+
+msgid "Referee report"
+msgstr "Signalement d'un arbitre"
+
+msgid "Mark it as handled in BellePoule2D > Referees on phones."
+msgstr "Marquez-le comme traité dans la fenêtre « Arbitres sur téléphone »."
+
+msgid "reported by"
+msgstr "signalé par"
+
+msgid "Handled"
+msgstr "Traité"
+
+msgid "Take off the piste"
+msgstr "Retirer de la piste"
+
+msgid "The bout (or pool) and its referees leave the piste"
+msgstr "Le match (ou la poule) et ses arbitres quittent la piste"
+
+msgid "Remove the referees"
+msgstr "Retirer les arbitres"
+
+msgid "The referees leave the bout, which stays on its piste"
+msgstr "Les arbitres quittent le match, qui reste sur sa piste"
+
+msgid "The referees' phones (ManageComp Arbitre app) exchange through your ManageComp server: no need to be on the same network."
+msgstr "Les téléphones des arbitres (ManageComp Arbitre) passent par votre serveur ManageComp : inutile d'être sur le même réseau."
+
+msgid "Server address"
+msgstr "Adresse du serveur"
+
+msgid "Club API key"
+msgstr "Clé d'API du club"
+
+msgid "Save and connect"
+msgstr "Enregistrer et connecter"
+
+msgid "Connected"
+msgstr "Connecté"
+
+msgid "Not configured"
+msgstr "Non configuré"
+
+msgid "Connection error"
+msgstr "Erreur de connexion"
+
+msgid "connecting…"
+msgstr "connexion…"
+
+msgid "API key refused"
+msgstr "Clé d'API refusée"
+
+msgid "Administrator"
+msgstr "Administrateur"
+
+msgid "all the bouts"
+msgstr "tous les matchs"
+
+msgid "Print the QR codes"
+msgstr "Imprimer les QR codes"
+
+msgid "Enter the server address and the club API key, then save: the QR codes appear once connected."
+msgstr "Saisissez l'adresse du serveur et la clé d'API du club, puis enregistrez : les QR codes apparaissent une fois connecté."
+
+msgid "Publish"
+msgstr "Publier"
+
+msgid "Public results page (compete.managecomp.org)"
+msgstr "Page publique des résultats (compete.managecomp.org)"
+
+msgid "Publish on ManageComp"
+msgstr "Publier sur ManageComp"
+
+msgid "Set the server address and the club API key first, in the Referees on phones window."
+msgstr "Réglez d'abord l'adresse du serveur et la clé d'API du club, dans la fenêtre « Arbitres sur téléphone »."
+
+msgid "A public page follows the event live (formula, fencers, pools, tables, ranking), with filters by name and club. Parents and fencers open it by scanning the QR code; it stays available after the competition."
+msgstr "Une page publique suit l'épreuve en direct (formule, tireurs, poules, tableaux, classement), avec des filtres par nom et par club. Parents et tireurs y accèdent en scannant le QR code ; elle reste consultable après la compétition."
+
+msgid "Fencers' names:"
+msgstr "Noms des tireurs :"
+
+msgid "Full names"
+msgstr "Noms complets"
+
+msgid "First name and initial"
+msgstr "Prénom et initiale du nom"
+
+msgid "Hide from search engines"
+msgstr "Cacher aux moteurs de recherche"
+
+msgid "The page stays available through its QR code and link, but does not show up on Google"
+msgstr "La page reste accessible par son QR code et son lien, mais n'apparaît pas sur Google"
+
+msgid "Group the open competitions in an event"
+msgstr "Regrouper les compétitions ouvertes dans un événement"
+
+msgid "Event name"
+msgstr "Nom de l'événement"
+
+msgid "Copy the link"
+msgstr "Copier le lien"
+
+msgid "Unpublish"
+msgstr "Dépublier"
+
+msgid "Publish again (options, event)"
+msgstr "Publier à nouveau (options, événement)"
+
+msgid "Event published ✔"
+msgstr "Événement publié ✔"
+
+msgid "Published ✔"
+msgstr "Publiée ✔"
+
+msgid "Publishing…"
+msgstr "Publication…"
+
+msgid "Unpublish this competition?"
+msgstr "Dépublier cette compétition ?"
+
+msgid "Its public page and QR code will stop working. You can publish it again (new address)."
+msgstr "Sa page publique et son QR code ne marcheront plus. Vous pourrez la publier à nouveau (nouvelle adresse)."
+
+msgid "Splitting"
+msgstr "Point de scission"
+
+msgid "Lobby (series)"
+msgstr "Lobby (série)"
+
+msgid "0: everybody"
+msgstr "0 : tout le monde"
+
+msgid "Best place"
+msgstr "Meilleure place"
+
+msgid "Everybody in a lobby races at the same time; each race gives points by place of arrival. Ties: same place, same points. Ranking: points, then wins, then best place."
+msgstr "Dans un lobby, tout le monde court en même temps ; chaque manche rapporte des points selon la place d'arrivée. Ex aequo : même place, mêmes points. Classement : points, puis victoires, puis meilleure place."
+
+msgid "Fencer"
+msgstr "Tireur"
+
+msgid "Individual ranking"
+msgstr "Classement individuel"
+
+msgid "Lobbies in parallel"
+msgstr "Lobbys en parallèle"
+
+msgid "Points for an abandon"
+msgstr "Points d'un abandon"
+
+msgid "Points for the 1st, 2nd, 3rd… separated by commas (e.g. 25, 18, 15, 12, 10)"
+msgstr "Points du 1er, du 2e, du 3e… séparés par des virgules (ex. 25, 18, 15, 12, 10)"
+
+msgid "Points per place"
+msgstr "Points par place"
+
+msgid "Qualified in total"
+msgstr "Qualifiés au total"
+
+msgid "Race"
+msgstr "Manche"
+
+msgid "Races"
+msgstr "Manches"
+
+msgid "Ranking of the phase"
+msgstr "Classement de la phase"
+
+msgid "Separate in the lobbies by"
+msgstr "Séparer dans les lobbys par"
+
+msgid "Team event"
+msgstr "Épreuve par équipes"
+
+msgid "Team ranking"
+msgstr "Classement des équipes"
+
+msgid "The lobbies are made when the phase starts."
+msgstr "Les lobbys sont composés au début de la phase."
+
+msgid "Type the place of each fencer in the race (the same place for ties, A for an abandon), then Enter."
+msgstr "Tapez la place de chaque tireur dans la manche (la même place pour des ex aequo, A pour un abandon), puis Entrée."
+
+msgid "Wins"
+msgstr "Victoires"
+
+msgid "each fencer of the team races"
+msgstr "chaque tireur de l'équipe court"
+
+msgid "empty: N points for the 1st, 1 for the last"
+msgstr "vide : N points au 1er, 1 au dernier"
+
+msgid "in total (merged ranking)"
+msgstr "au total (classement fusionné)"
+
+msgid "lobby(ies)"
+msgstr "lobby(s)"
+
+msgid "lobby(ies) over"
+msgstr "lobby(s) terminé(s)"
+
+msgid "per lobby"
+msgstr "par lobby"
+
+msgid "races:"
+msgstr "manches :"
+
+msgid "sum of its best fencers"
+msgstr "somme de ses meilleurs tireurs"
+
+msgid "sum of the points of its fencers"
+msgstr "somme des points de ses tireurs"
+
+msgid "the team races as one competitor"
+msgstr "l'équipe court comme un seul participant"
+
+msgid "balanced (serpentine)"
+msgstr "équilibrée (serpentin)"
+
+msgid "by equivalent strength"
+msgstr "par force équivalente"
+
+msgid "Balanced: serpentine from the entry ranking, like pools. By equivalent strength: the best together in lobby 1, the next ones in lobby 2…"
+msgstr "Équilibrée : serpentin d'après le classement d'entrée, comme les poules. Par force équivalente : les meilleurs ensemble dans le lobby 1, les suivants dans le lobby 2…"

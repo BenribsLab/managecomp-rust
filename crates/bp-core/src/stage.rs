@@ -34,10 +34,12 @@ pub enum StageKind {
     YouthTraining,
     /// « Division pools » — `PoulesDeDivision` (extension : montées et descentes).
     DivisionRound,
+    /// « Lobby (series) » — `Lobby` (extension : course ou jeu, ordre d'arrivée).
+    Lobby,
 }
 
 impl StageKind {
-    pub const ALL: [StageKind; 9] = [
+    pub const ALL: [StageKind; 10] = [
         StageKind::Checkin,
         StageKind::PoolAllocator,
         StageKind::PoolSupervisor,
@@ -46,6 +48,7 @@ impl StageKind {
         StageKind::Splitting,
         StageKind::YouthTraining,
         StageKind::DivisionRound,
+        StageKind::Lobby,
         StageKind::GeneralClassification,
     ];
 
@@ -61,6 +64,7 @@ impl StageKind {
             StageKind::GeneralClassification => "ClassementGeneral",
             StageKind::YouthTraining => "EntrainementJeunes",
             StageKind::DivisionRound => "PoulesDeDivision",
+            StageKind::Lobby => "Lobby",
         }
     }
 
@@ -76,6 +80,7 @@ impl StageKind {
             StageKind::GeneralClassification => "General classification",
             StageKind::YouthTraining => "Youth training",
             StageKind::DivisionRound => "Division pools",
+            StageKind::Lobby => "Lobby (series)",
         }
     }
 
@@ -86,7 +91,7 @@ impl StageKind {
     pub fn rights(self) -> StageRights {
         match self {
             StageKind::Checkin | StageKind::Barrage => StageRights { editable: true, removable: false },
-            StageKind::PoolSupervisor | StageKind::TableSupervisor | StageKind::Splitting | StageKind::YouthTraining | StageKind::DivisionRound => {
+            StageKind::PoolSupervisor | StageKind::TableSupervisor | StageKind::Splitting | StageKind::YouthTraining | StageKind::DivisionRound | StageKind::Lobby => {
                 StageRights { editable: true, removable: true }
             }
             StageKind::PoolAllocator | StageKind::GeneralClassification => StageRights::default(),

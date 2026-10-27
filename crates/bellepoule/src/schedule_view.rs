@@ -436,7 +436,7 @@ impl ScheduleView {
             screen.refresh();
             if let Some(configuration) = screen.configuration() {
                 Glade::detach_from_parent(&configuration);
-                if matches!(kind, StageKind::PoolSupervisor | StageKind::TableSupervisor | StageKind::Barrage) {
+                if matches!(kind, StageKind::PoolSupervisor | StageKind::TableSupervisor | StageKind::Barrage | StageKind::Lobby) {
                     hook.set_child(Some(&crate::widgets::bout_timing::wrap(&configuration, &page, index)));
                 } else { hook.set_child(Some(&configuration)); }
             }
@@ -565,11 +565,16 @@ impl ScheduleView {
         page.with_contest(|c| c.with_schedule(|s, ctx| s.enter_next(ctx)));
         page.mark_dirty();
         self.refresh();
-        // Une compétition par division créée.
+        // Une compétition par division créée ; publiée si la compétition l'est.
         if let Some(app) = page.app.upgrade() {
+            let mut derived_pages = Vec::new();
             for id in split_contests {
-                if let Some(derived) = app.show_managed_contest(id) { derived.mark_dirty(); }
+                if let Some(derived) = app.show_managed_contest(id) {
+                    derived.mark_dirty();
+                    derived_pages.push(derived);
+                }
             }
+            crate::publish::publish_split(&app, &page, derived_pages);
         }
 
     }

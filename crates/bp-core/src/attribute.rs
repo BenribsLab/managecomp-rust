@@ -570,8 +570,9 @@ fn build_registry() -> Registry {
     d.rights = Rights::Private;
     v.push(d);
 
+    // Clé personnelle d'un arbitre (QR code de son téléphone, PIN) :
+    // enregistrée, pour que les QR codes imprimés restent valables.
     d = AttributeDesc::new(Str, "password", "MotDePasse", "Password");
-    d.persistency = Persistency::NotPersistent;
     d.rights = Rights::Private;
     v.push(d);
 

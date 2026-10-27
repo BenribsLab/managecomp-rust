@@ -34,6 +34,8 @@ pub struct SheetsData {
     /// Nom imprimé dans le bandeau (« Poules - Tour n° 1 »).
     pub page_name: String,
     pub sheets: Vec<PoolSheet>,
+    /// QR code de chaque feuille (téléphones des arbitres, avec PIN).
+    pub qr: Vec<Option<String>>,
     pub density: (u32, u32),
     pub identities: std::collections::HashMap<bp_core::player::PlayerRef, Identity>,
 }
@@ -98,7 +100,7 @@ fn score_boxes(canvas: &Canvas, parent: ItemId, n: u32, x: f64, y: f64, size: f6
 }
 
 /// Une feuille de poule (`Pool::Draw` pour l'impression).
-fn draw_sheet(canvas: &Canvas, sheet: &PoolSheet, data: &SheetsData, watermark: bool) -> ItemId {
+fn draw_sheet(canvas: &Canvas, sheet: &PoolSheet, data: &SheetsData, qr: Option<&str>, watermark: bool) -> ItemId {
     let layout = bp_gtk::print::layout();
     let s = layout.body_scale();
     let px = |size: f64| format!("Sans {:.2}px", size * s);
@@ -135,6 +137,11 @@ fn draw_sheet(canvas: &Canvas, sheet: &PoolSheet, data: &SheetsData, watermark: 
             let t = canvas.text(root, f, referee_x + 20.0, box_y + 2.4 * CELL / 3.0, -1.0, Anchor::W);
             canvas.set(t, [Prop::FillColor("darkgreen".into()), Prop::Font(bold(15.0))]);
         }
+    }
+    // QR code de la feuille : l'arbitre le scanne puis entre son PIN.
+    if let Some(text) = qr {
+        let size = box_y + CELL;
+        crate::widgets::score_sheet::draw_qr(canvas, root, text, piste_x + box_w + CELL / 2.0, 0.0, size);
     }
     if let Some(piste) = &sheet.piste {
         let t = canvas.text(root, piste, piste_x + 5.0, box_y + CELL / 2.0, -1.0, Anchor::W);
@@ -305,7 +312,12 @@ fn draw_sheet(canvas: &Canvas, sheet: &PoolSheet, data: &SheetsData, watermark: 
 /// Feuilles de poule paginées (aperçu, impression, impression complète).
 pub fn sheets_source(data: &SheetsData, watermark: bool) -> Box<dyn bp_gtk::print::PageSource> {
     let canvas = Canvas::new();
-    let groups: Vec<ItemId> = data.sheets.iter().map(|sheet| draw_sheet(&canvas, sheet, data, watermark)).collect();
+    let groups: Vec<ItemId> = data
+        .sheets
+        .iter()
+        .enumerate()
+        .map(|(i, sheet)| draw_sheet(&canvas, sheet, data, data.qr.get(i).cloned().flatten().as_deref(), watermark))
+        .collect();
     Box::new(bp_gtk::print::Tiled::new(&data.page_name, &data.page_name, canvas, groups, data.density.0 as usize, data.density.1 as usize))
 }
 

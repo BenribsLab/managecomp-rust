@@ -294,12 +294,14 @@ impl Hall {
         let heading = match root.tag_name().name() {
             "Poule" => "Pool",
             "Match" => "Match",
+            // Lobby (série) : placé comme une poule.
+            "Lobby" => "Lobby",
             _ => return None,
         };
         let key = self.next_job;
         self.next_job += 1;
         let mut job = Job::new(key, c, b, message, color);
-        job.is_pool = root.tag_name().name() == "Poule";
+        job.is_pool = matches!(root.tag_name().name(), "Poule" | "Lobby");
         job.name = match root.attribute("ID") {
             Some(id) => format!("{} {}", bp_core::i18n::tr(heading), id),
             None => bp_core::i18n::tr("Pool"),
@@ -751,6 +753,34 @@ impl Hall {
         self.events.push(UiEvent::ExposeWeapon(weapon));
         self.batch_mute(c, b, false);
         self.batch_recall(c, b);
+    }
+
+    /// Retire un match (ou une poule) de sa piste, avec ses arbitres
+    /// (fiche du match, double-clic sur la piste).
+    pub fn job_take_off(&mut self, job: JobKey) {
+        let Some((sk, c)) = self.jobs.get(&job).and_then(|j| Some((j.slot?, j.competition))) else { return };
+        let weapon = self.competition(c).map(|x| x.weapon.clone());
+        self.slot_remove_job(sk, job);
+        self.job_reset_roadmap(job);
+        self.gc_slots();
+        self.redraw();
+        if let Some(w) = weapon {
+            self.refresh_workload(&w);
+            self.events.push(UiEvent::ExposeWeapon(w));
+        }
+    }
+
+    /// Retire les arbitres d'un match ; le match reste sur sa piste.
+    pub fn job_remove_referees(&mut self, job: JobKey) {
+        let Some((sk, c)) = self.jobs.get(&job).and_then(|j| Some((j.slot?, j.competition))) else { return };
+        while let Some(r) = self.slots.get(&sk).and_then(|s| s.referees.first().copied()) {
+            self.slot_remove_referee(sk, r);
+        }
+        self.redraw();
+        if let Some(w) = self.competition(c).map(|x| x.weapon.clone()) {
+            self.refresh_workload(&w);
+            self.events.push(UiEvent::ExposeWeapon(w));
+        }
     }
 
     /// `Batch::OnExtension` : durée doublée ou triplée des matchs en attente.

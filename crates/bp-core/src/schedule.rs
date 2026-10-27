@@ -673,13 +673,14 @@ impl Schedule {
         }
         if let Some(node) = node {
             self.stages[index].load(ctx, node)?;
-            // Le classement général, l'entraînement des jeunes et le point de
-            // scission n'enregistrent pas leurs participants : ce sont les
-            // qualifiés de la phase d'avant.
+            // Le classement général, l'entraînement des jeunes, le point de
+            // scission et le lobby n'enregistrent pas leurs participants : ce
+            // sont les qualifiés de la phase d'avant.
             let derived = self.stages[index].as_any().is::<GeneralClassificationStage>()
                 || self.stages[index].as_any().is::<crate::rounds::youth::YouthTraining>()
                 || self.stages[index].as_any().is::<crate::rounds::splitting::Splitting>()
-                || self.stages[index].as_any().is::<crate::rounds::divisions::DivisionRound>();
+                || self.stages[index].as_any().is::<crate::rounds::divisions::DivisionRound>()
+                || self.stages[index].as_any().is::<crate::rounds::lobby::Lobby>();
             if derived && index > 0 && self.stages[index - 1].base().locked {
                 self.retrieve_attendees(ctx, index);
             }

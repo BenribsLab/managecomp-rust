@@ -67,4 +67,4 @@ rusb = "0.9"
 # Raspberry Pi (LivePoule, feature `raspberry`, cible Linux ARM uniquement)
 rppal = "0.22"
 # Détection native des clés USB sous Windows (bp-usb-backend, port de main-win.cpp)
-windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_LibraryLoader", "Win32_Graphics_Gdi"] }
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_LibraryLoader", "Win32_Graphics_Gdi", "Win32_Media_Audio"] }

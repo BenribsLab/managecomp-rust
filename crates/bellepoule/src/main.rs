@@ -13,6 +13,7 @@ mod app;
 mod capture;
 mod categories_tab;
 mod points_tab;
+mod publish;
 mod season_window;
 mod contest_page;
 mod language;
@@ -25,6 +26,7 @@ mod stages;
 mod widgets;
 mod shell;
 mod smartpoule;
+mod sound;
 mod visuals;
 
 use std::path::PathBuf;

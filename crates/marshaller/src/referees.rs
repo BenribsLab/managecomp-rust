@@ -448,6 +448,37 @@ impl Hall {
         self.redraw();
     }
 
+    /// Clé personnelle de chaque arbitre (QR code, PIN), créée au besoin
+    /// et transmise aux compétitions. Vrai si une clé a été créée.
+    pub fn ensure_referee_keys(&mut self) -> bool {
+        let refs: Vec<u32> = self.referees.referees.keys().copied().collect();
+        let mut created = false;
+        for r in refs {
+            let has = self.referees.referees.get(&r).and_then(|x| x.player.str_attr("password")).is_some_and(bp_core::smartpoule::is_referee_key);
+            if !has {
+                self.referee_wifi_key(r);
+                created = true;
+            }
+        }
+        created
+    }
+
+    /// Clé personnelle d'un arbitre de la salle (sans la créer).
+    pub fn referee_key(&self, reference: u32) -> Option<String> {
+        self.referees.referees.get(&reference)?.player.str_attr("password").filter(|k| bp_core::smartpoule::is_referee_key(k)).map(str::to_string)
+    }
+
+    /// Nouvelle clé d'un arbitre : nouveau QR code personnel et nouveau PIN.
+    pub fn renew_referee_key(&mut self, reference: u32) -> Option<String> {
+        let key = bp_core::smartpoule::new_referee_key();
+        let r = self.referees.referees.get_mut(&reference)?;
+        r.player.set_str(&AttrId::global("password"), &key);
+        r.wifi_key = Some(key.clone());
+        self.outbox.push(NetCommand::RegisterSecretKey { referee: reference, key: key.clone() });
+        self.referee_update(reference);
+        Some(key)
+    }
+
     /// Clé du QR code d'un arbitre (`WifiCode::GetKey`) : générée à la
     /// demande et mémorisée dans l'attribut `password`.
     pub fn referee_wifi_key(&mut self, reference: u32) -> Option<String> {

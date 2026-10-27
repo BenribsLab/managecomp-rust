@@ -609,6 +609,34 @@ impl JobBoard {
                 }
             }
         });
+        // Désaffecter : le match quitte sa piste, ou ses arbitres le quittent.
+        for (label, tooltip, take_off) in [
+            (tr("Take off the piste"), tr("The bout (or pool) and its referees leave the piste"), true),
+            (tr("Remove the referees"), tr("The referees leave the bout, which stays on its piste"), false),
+        ] {
+            let button = gtk::Button::with_label(&label);
+            button.set_tooltip_text(Some(&tooltip));
+            self.glade.get::<gtk::Dialog>("dialog").add_action_widget(&button, gtk::ResponseType::Other(if take_off { 302 } else { 303 }));
+            let weak = Rc::downgrade(self);
+            button.connect_clicked(move |_| {
+                let Some(board) = weak.upgrade() else { return };
+                let (Some(ui), Some(job)) = (board.ui.upgrade(), board.current_job()) else { return };
+                {
+                    let mut hall = ui.hall.borrow_mut();
+                    if take_off {
+                        hall.job_take_off(job);
+                    } else {
+                        hall.job_remove_referees(job);
+                    }
+                }
+                ui.after_change();
+                if take_off {
+                    board.glade.get::<gtk::Dialog>("dialog").set_visible(false);
+                } else {
+                    board.display();
+                }
+            });
+        }
         macro_rules! on {
             ($name:expr, $body:expr) => {{
                 let w = Rc::downgrade(self);

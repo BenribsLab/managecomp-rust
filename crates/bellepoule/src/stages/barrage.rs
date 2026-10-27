@@ -481,6 +481,7 @@ impl SheetsSource {
             fencers: bout.markups.clone(),
             max_score: self.max_score,
             flash_ref: None,
+            qr: None,
         }
     }
 }

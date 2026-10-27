@@ -223,3 +223,8 @@ window.bp-loading { background: #ffffff; border-radius: 16px; border: 1px solid 
 window.bp-loading .bp-loading-title { font-size: 17px; font-weight: 700; color: #1b2b3c; }
 window.bp-loading progressbar > trough { min-height: 10px; border-radius: 6px; background: #e8eef7; }
 window.bp-loading progressbar > trough > progress { min-height: 10px; border-radius: 6px; background: linear-gradient(90deg, #3b8cf0, #0866cd); }
+
+.bp-recent-remove { margin: 4px; min-width: 22px; min-height: 22px; padding: 2px; opacity: 0.55; }
+.bp-recent-remove:hover { opacity: 1; }
+
+.bp-nav-dot { background: #dc2626; color: #ffffff; border-radius: 999px; min-width: 18px; min-height: 18px; padding: 0 5px; font-size: 11px; font-weight: bold; }

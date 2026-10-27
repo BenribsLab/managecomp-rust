@@ -14,8 +14,11 @@ pub struct Shell {
     navigation: Vec<(gtk::Button, Vec<StageKind>)>,
     home: gtk::Button,
     organisation: gtk::Button,
+    /// Puce rouge : signalements des arbitres en cours.
+    organisation_dot: gtk::Label,
     preferences: gtk::Button,
     preferences_shortcut: gtk::Button,
+    publish: gtk::Button,
     resume: gtk::Button,
     /// Vignettes des compétitions récentes (accueil).
     recent: gtk::FlowBox,
@@ -61,6 +64,7 @@ impl Shell {
                     StageKind::PoolAllocator,
                     StageKind::YouthTraining,
                     StageKind::DivisionRound,
+                    StageKind::Lobby,
                 ],
             ),
             ("bracket", "Table", vec![StageKind::TableSupervisor]),
@@ -99,6 +103,14 @@ impl Shell {
             }
         });
         sidebar.append(&organisation);
+        let organisation_dot = gtk::Label::new(None);
+        organisation_dot.add_css_class("bp-nav-dot");
+        organisation_dot.set_visible(false);
+        organisation_dot.set_hexpand(true);
+        organisation_dot.set_halign(gtk::Align::End);
+        if let Some(content) = organisation.child().and_downcast::<gtk::Box>() {
+            content.append(&organisation_dot);
+        }
         let preferences = visuals::action("settings", "Preferences");
         preferences.add_css_class("bp-nav-item");
         let weak = Rc::downgrade(app);
@@ -108,6 +120,15 @@ impl Shell {
             }
         });
         sidebar.append(&preferences);
+        let season = visuals::action("season", "Season ranking");
+        season.add_css_class("bp-nav-item");
+        let weak = Rc::downgrade(app);
+        season.connect_clicked(move |_| {
+            if let Some(app) = weak.upgrade() {
+                crate::season_window::open(&app);
+            }
+        });
+        sidebar.append(&season);
         let spacer = gtk::Box::new(gtk::Orientation::Vertical, 0);
         spacer.set_vexpand(true);
         sidebar.append(&spacer);
@@ -179,6 +200,16 @@ impl Shell {
             }
         });
         brandbar.append(&preferences_shortcut);
+        // Publication sur ManageComp (compete.managecomp.org).
+        let publish = visuals::action("publish", "Publish");
+        publish.set_tooltip_text(Some(&tr("Public results page (compete.managecomp.org)")));
+        let weak = Rc::downgrade(app);
+        publish.connect_clicked(move |_| {
+            if let Some(app) = weak.upgrade() {
+                crate::publish::show_dialog(&app);
+            }
+        });
+        brandbar.append(&publish);
         layout.prepend(&brandbar);
 
         let shell = Rc::new(Self {
@@ -187,8 +218,10 @@ impl Shell {
             navigation,
             home,
             organisation,
+            organisation_dot,
             preferences,
             preferences_shortcut,
+            publish,
             resume,
             recent,
             recent_title,
@@ -309,13 +342,44 @@ impl Shell {
         for path in files {
             let card = recent_card(&path);
             let weak = self.app.clone();
+            let opened = path.clone();
             card.connect_clicked(move |_| {
                 if let Some(app) = weak.upgrade() {
-                    app.open_recent(&path);
+                    app.open_recent(&opened);
                 }
             });
-            self.recent.insert(&card, -1);
+            // Retrait de l'accueil : le fichier n'est pas effacé.
+            let remove = gtk::Button::from_icon_name("window-close-symbolic");
+            remove.add_css_class("flat");
+            remove.add_css_class("circular");
+            remove.add_css_class("bp-recent-remove");
+            remove.set_halign(gtk::Align::End);
+            remove.set_valign(gtk::Align::Start);
+            remove.set_tooltip_text(Some(&tr("Remove from recent competitions (the file is kept)")));
+            let weak = self.app.clone();
+            remove.connect_clicked(move |_| {
+                let Some(app) = weak.upgrade() else { return };
+                let name = path.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+                let question = format!("{} « {} » ?", tr("Remove from recent competitions"), gtk::glib::markup_escape_text(&name));
+                if bp_gtk::dialogs::confirm(Some(&app.window), &question, Some(&tr("The file is not deleted.")), None) {
+                    app.tournament.borrow_mut().remove_recent(&path);
+                    if let Some(shell) = app.shell.borrow().as_ref() {
+                        shell.refresh_recent();
+                    }
+                }
+            });
+            let overlay = gtk::Overlay::new();
+            overlay.set_child(Some(&card));
+            overlay.add_overlay(&remove);
+            self.recent.insert(&overlay, -1);
         }
+    }
+
+    /// Signalements des arbitres en cours (absence d'un tireur).
+    pub fn set_reports(&self, open: usize) {
+        self.organisation_dot.set_visible(open > 0);
+        self.organisation_dot.set_text(&open.to_string());
+        self.organisation_dot.set_tooltip_text(Some(&format!("{open} {}", tr("referee report(s): see Referees on phones"))));
     }
 
     pub fn show_home(&self) {
@@ -368,6 +432,7 @@ impl Shell {
         }
         self.preferences.set_sensitive(page.is_some());
         self.preferences_shortcut.set_sensitive(page.is_some());
+        self.publish.set_sensitive(page.is_some());
         self.resume.set_visible(page.is_some());
         set_selected(&self.home, self.at_home.get());
         set_selected(&self.organisation, organisation && !self.at_home.get());

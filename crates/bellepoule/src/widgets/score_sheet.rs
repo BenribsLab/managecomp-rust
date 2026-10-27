@@ -25,6 +25,33 @@ pub struct SheetInfo {
     pub max_score: u32,
     /// Référence du match (remplace le code flash).
     pub flash_ref: Option<String>,
+    /// QR code du match (téléphone de l'arbitre, avec PIN).
+    pub qr: Option<String>,
+}
+
+/// QR code dessiné en carrés noirs (net à l'impression), coin haut gauche
+/// en (`x`, `y`), côté `size`.
+pub fn draw_qr(canvas: &Canvas, parent: bp_gtk::canvas::ItemId, text: &str, x: f64, y: f64, size: f64) {
+    let Some(m) = bp_net::flash_code::QrMatrix::encode(text) else { return };
+    let module = size / m.width as f64;
+    let background = canvas.rect(parent, x, y, size, size);
+    canvas.set(background, [Prop::FillColor("white".into()), Prop::NoStroke]);
+    for yy in 0..m.width {
+        // Carrés noirs voisins d'une même ligne réunis.
+        let mut xx = 0;
+        while xx < m.width {
+            if !m.is_dark(xx, yy) {
+                xx += 1;
+                continue;
+            }
+            let start = xx;
+            while xx < m.width && m.is_dark(xx, yy) {
+                xx += 1;
+            }
+            let r = canvas.rect(parent, x + start as f64 * module, y + yy as f64 * module, (xx - start) as f64 * module + module * 0.02, module * 1.02);
+            canvas.set(r, [Prop::FillColor("black".into()), Prop::NoStroke]);
+        }
+    }
 }
 
 /// Identité d'un tireur comme `GetPlayerImage` : nom en gras bleu foncé,
@@ -81,6 +108,9 @@ pub fn sheet_canvas(info: &SheetInfo) -> Canvas {
         canvas.set(f, [Prop::Font(small_font.clone()), Prop::FillColor("DarkGreen".into())]);
     }
     frame(85.0, &tr("Piste"));
+    if let Some(text) = &info.qr {
+        draw_qr(&canvas, root, text, 122.0, 0.0, 15.0);
+    }
     if let Some(piste) = &info.piste {
         let p = canvas.text(root, piste, 90.0, 4.2, -1.0, Anchor::W);
         canvas.set(p, [Prop::Font(title_font.clone()), Prop::FillColor("DarkGreen".into())]);

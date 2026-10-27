@@ -26,7 +26,7 @@ use crate::widgets::{
     render,
 };
 
-mod print;
+pub(crate) mod print;
 
 // Match, tireur, vue (grille ou liste des matchs).
 type Key = (usize, PlayerRef, bool);
@@ -708,7 +708,7 @@ impl SupervisorScreen {
         let selected = self.selected.get();
         let data = page
             .with_contest(|c| {
-                let mut data = sheets_data(c, self.index, |i| all || i == selected, referees)?;
+                let mut data = sheets_data(c, self.index, |i| all || i == selected, referees, true)?;
                 if referees || !all {
                     data.density = (1, 1);
                 }
@@ -959,15 +959,16 @@ fn classification_data(c: &Contest, index: usize, single: bool) -> Option<(Strin
 
 /// Feuilles des poules retenues par `keep` (indice de la poule), avec
 /// l'identité des tireurs selon les colonnes choisies pour la feuille.
-fn sheets_data(c: &Contest, index: usize, keep: impl Fn(usize) -> bool, for_referees: bool) -> Option<print::SheetsData> {
+/// `with_qr` : QR code de chaque feuille pour les téléphones des arbitres
+/// (liaison SmartPoule réglée).
+fn sheets_data(c: &Contest, index: usize, keep: impl Fn(usize) -> bool, for_referees: bool, with_qr: bool) -> Option<print::SheetsData> {
     let stage = c.schedule.stage(index)?.as_any().downcast_ref::<PoolSupervisorStage>()?;
     let round = stage.round();
-    let sheets: Vec<_> = round
-        .pools()
+    let kept: Vec<_> = round.pools().iter().enumerate().filter(|(i, _)| keep(*i)).map(|(_, p)| p).collect();
+    let sheets: Vec<_> = kept.iter().map(|p| p.sheet(&c.players, c.referees.store(), for_referees)).collect();
+    let qr: Vec<Option<String>> = kept
         .iter()
-        .enumerate()
-        .filter(|(i, _)| keep(*i))
-        .map(|(_, p)| p.sheet(&c.players, c.referees.store(), for_referees))
+        .map(|p| if with_qr { crate::smartpoule::sheet_qr(&bp_core::smartpoule::pool_token(c.net_id, round.net_id(), p.number())) } else { None })
         .collect();
     let owner = round.supervisor_owner();
     let mut identities = std::collections::HashMap::new();
@@ -992,6 +993,7 @@ fn sheets_data(c: &Contest, index: usize, keep: impl Fn(usize) -> bool, for_refe
     Some(print::SheetsData {
         page_name: format!("{} - {}", tr(stage.kind().class_name()), round.name),
         sheets,
+        qr,
         density: round.print_density(),
         identities,
     })
@@ -1001,7 +1003,7 @@ fn sheets_data(c: &Contest, index: usize, keep: impl Fn(usize) -> bool, for_refe
 /// classement cumulé (impression de l'événement).
 pub fn results_sources(c: &Contest, index: usize) -> Vec<Box<dyn bp_gtk::print::PageSource>> {
     let mut parts: Vec<Box<dyn bp_gtk::print::PageSource>> = Vec::new();
-    if let Some(data) = sheets_data(c, index, |_| true, false) {
+    if let Some(data) = sheets_data(c, index, |_| true, false, false) {
         parts.push(print::sheets_source(&data, false));
     }
     if let Some((title, headers, rows)) = classification_data(c, index, false) {
@@ -1031,7 +1033,7 @@ mod tests {
             .find(|i| c.schedule.stage(*i).map(|s| s.kind() == StageKind::PoolSupervisor).unwrap_or(false))
             .expect("poules");
         for referees in [false, true] {
-            let mut data = sheets_data(c, index, |i| i == 0, referees).expect("feuilles");
+            let mut data = sheets_data(c, index, |i| i == 0, referees, false).expect("feuilles");
             data.density = (1, 1);
             let header = bp_gtk::print::PageHeader {
                 name: c.name.clone(),

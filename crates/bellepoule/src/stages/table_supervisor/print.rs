@@ -131,6 +131,9 @@ fn score_sheet(snapshot: &Snapshot, node: NodeId) -> Option<crate::widgets::scor
             .collect(),
         max_score,
         flash_ref: sheet.flash_ref,
+        qr: set
+            .match_path(node)
+            .and_then(|path| crate::smartpoule::sheet_qr(&bp_core::smartpoule::match_token(snapshot.contest_net_id, snapshot.base.net_id, set.id(), &path))),
     })
 }
 

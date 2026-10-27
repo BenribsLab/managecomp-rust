@@ -28,5 +28,8 @@ ureq = { workspace = true }
 serde_json = { workspace = true }
 pangocairo = { workspace = true }
 
+[target.'cfg(windows)'.dependencies]
+windows-sys = { workspace = true }
+
 [build-dependencies]
 winresource = "0.1"

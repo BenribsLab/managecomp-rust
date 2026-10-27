@@ -294,3 +294,25 @@ fn birth_year_reads_common_date_formats() {
     assert_eq!(birth_year(Some("2014-03-12")), Some(2014));
     assert_eq!(birth_year(Some("")), None);
 }
+
+#[test]
+fn division_continues_the_formula_after_the_split() {
+    let (mut c, _) = ten_fencers();
+    // Après la scission : tableau (score 10, 4 qualifiés), puis classement.
+    c.with_schedule(|s, _| {
+        let base = s.stage_mut(2).unwrap().base_mut();
+        base.max_score = Some(10);
+        base.nb_qualified = Some(4);
+    });
+    configure(&mut c, SplitConfig {
+        mode: SplitMode::Ranking,
+        keep: None,
+        divisions: vec![division("Division 1", Some(Size::Count(3)), None), division("Division 2", None, None)],
+    });
+    let target = c.duplicate_split(1, 1, None).unwrap();
+    let kinds: Vec<StageKind> = target.schedule.stages().map(|s| s.kind()).collect();
+    assert_eq!(kinds, vec![StageKind::Checkin, StageKind::TableSupervisor, StageKind::GeneralClassification], "pas de poules ajoutées");
+    let table = target.schedule.stage(1).unwrap();
+    assert_eq!(table.base().max_score, Some(10));
+    assert_eq!(table.base().nb_qualified, Some(4));
+}

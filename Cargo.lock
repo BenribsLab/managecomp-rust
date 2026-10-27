@@ -125,6 +125,7 @@ dependencies = [
  "roxmltree",
  "serde_json",
  "ureq",
+ "windows-sys 0.59.0",
  "winresource",
  "zip",
 ]

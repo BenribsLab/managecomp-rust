@@ -248,6 +248,15 @@ impl Tournament {
         self.config.set_string_list("Tournament", "recent_files", &refs);
     }
 
+    /// Retire un fichier de la liste des récents (le fichier est conservé).
+    pub fn remove_recent(&mut self, path: &Path) {
+        let path = path.to_string_lossy().to_string();
+        let mut list = self.recent_raw();
+        list.retain(|p| *p != path);
+        let refs: Vec<&str> = list.iter().map(String::as_str).collect();
+        self.config.set_string_list("Tournament", "recent_files", &refs);
+    }
+
     fn recent_raw(&self) -> Vec<String> {
         self.config.get_string_list("Tournament", "recent_files").unwrap_or_default()
     }

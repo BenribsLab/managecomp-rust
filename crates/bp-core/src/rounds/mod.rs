@@ -8,6 +8,7 @@ pub mod barrage;
 pub mod splitting;
 pub mod youth;
 pub mod divisions;
+pub mod lobby;
 
 use crate::stage::{Stage, StageKind};
 
@@ -22,5 +23,6 @@ pub fn create_stage(kind: StageKind, id: u32) -> Box<dyn Stage> {
         StageKind::GeneralClassification => classification::new_stage(kind, id),
         StageKind::YouthTraining => youth::new_stage(kind, id),
         StageKind::DivisionRound => divisions::new_stage(kind, id),
+        StageKind::Lobby => lobby::new_stage(kind, id),
     }
 }

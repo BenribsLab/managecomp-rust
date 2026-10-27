@@ -7,7 +7,9 @@
 - `marshaller`         : logique d'organisation (sans l'interface GTK `ui/`
                          ni `main.rs`), compilée sans l'option `gui` ;
 - `bp-net`             : seulement le type `Message` (le reste du réseau
-                         n'est pas utilisé par le web).
+                         n'est pas utilisé par le web) ;
+- traductions          : `resources/translations` (mêmes textes que le
+                         logiciel : noms de phases, de tableaux…).
 
 Usage : python tools/sync_web.py
 """
@@ -53,6 +55,9 @@ def remove_fn(text, name):
 def main():
     # bp-core
     copy_tree(os.path.join(DESKTOP, "crates", "bp-core", "src"), os.path.join(WEB, "bp-core", "src"))
+
+    # Traductions
+    copy_tree(os.path.join(DESKTOP, "resources", "translations"), os.path.join(WEB, "resources", "translations"))
 
     # marshaller (logique seule)
     src = os.path.join(DESKTOP, "crates", "marshaller", "src")
